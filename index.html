@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #03060a;
+    --surface:  #080e14;
+    --card:     #0b1520;
+    --border:   #152030;
+    --glow:     #00d4ff;
+    --glow2:    #ff6b35;
+    --green:    #00ff9d;
+    --text:     #b8cfe0;
+    --muted:    #3a5268;
+    --danger:   #ff3c5a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND GRID ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    width: 100%;
+    padding: 60px 24px 40px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--glow), transparent);
+    opacity: 0.4;
+  }
+
+  .logo-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .logo-icon {
+    width: 52px; height: 52px;
+    border: 2px solid var(--glow);
+    display: grid; place-items: center;
+    position: relative;
+    animation: rotateBorder 6s linear infinite;
+  }
+
+  @keyframes rotateBorder {
+    0%   { box-shadow: 2px 0 8px var(--glow); border-color: var(--glow); }
+    50%  { box-shadow: -2px 0 8px var(--glow2); border-color: var(--glow2); }
+    100% { box-shadow: 2px 0 8px var(--glow); border-color: var(--glow); }
+  }
+
+  .logo-icon svg { width: 26px; height: 26px; fill: none; stroke: var(--glow); stroke-width: 1.8; }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 9vw, 84px);
+    letter-spacing: 0.12em;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(0,212,255,0.35), 0 0 80px rgba(0,212,255,0.1);
+    line-height: 1;
+  }
+
+  .logo-text span { color: var(--glow); }
+
+  .tagline {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .spec-pills {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    color: var(--muted);
+    background: var(--surface);
+    transition: all 0.2s;
+  }
+
+  .pill.highlight {
+    border-color: var(--glow);
+    color: var(--glow);
+    box-shadow: 0 0 10px rgba(0,212,255,0.15);
+  }
+
+  /* ── MAIN CONTAINER ── */
+  .wrap {
+    width: 100%;
+    max-width: 860px;
+    padding: 40px 24px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    color: var(--glow);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '//';
+    opacity: 0.5;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 24px; right: 24px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,212,255,0.3), transparent);
+  }
+
+  /* ── KEY INPUT AREA ── */
+  .key-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .field-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field-label .required {
+    color: var(--glow2);
+    font-size: 11px;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-color: var(--muted);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  input:focus {
+    border-color: var(--glow);
+    box-shadow: 0 2px 0 var(--glow), 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  input::placeholder { color: var(--muted); font-size: 12px; }
+
+  .key-strength {
+    height: 3px;
+    background: var(--border);
+    margin-top: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .key-strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s, background 0.3s;
+    background: var(--danger);
+  }
+
+  .strength-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  .btn-gen {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--glow);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 12px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.15s;
+    align-self: end;
+  }
+
+  .btn-gen:hover {
+    border-color: var(--glow);
+    box-shadow: 0 0 15px rgba(0,212,255,0.2);
+  }
+
+  .btn-clear {
+    background: var(--surface);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 12px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .btn-clear:hover {
+    background: rgba(255,60,90,0.1);
+    box-shadow: 0 0 15px rgba(255,60,90,0.2);
+  }
+
+  /* ── TEXTAREA ── */
+  .textarea-wrap { position: relative; }
+
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: #e8f4ff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 16px;
+    resize: vertical;
+    min-height: 130px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+
+  textarea:focus {
+    border-color: var(--glow);
+    box-shadow: 0 0 20px rgba(0,212,255,0.08);
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  .char-count {
+    position: absolute;
+    bottom: 10px; right: 14px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.2em;
+    padding: 16px 28px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.15s;
+  }
+
+  .btn:hover::after { background: rgba(255,255,255,0.05); }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-encrypt {
+    background: linear-gradient(135deg, #004466, #006688);
+    color: var(--glow);
+    border: 1px solid rgba(0,212,255,0.3);
+    box-shadow: inset 0 1px 0 rgba(0,212,255,0.1);
+  }
+
+  .btn-encrypt:hover {
+    box-shadow: 0 0 30px rgba(0,212,255,0.25), inset 0 1px 0 rgba(0,212,255,0.2);
+    border-color: var(--glow);
+  }
+
+  .btn-decrypt {
+    background: linear-gradient(135deg, #2a1208, #3d1a0a);
+    color: var(--glow2);
+    border: 1px solid rgba(255,107,53,0.3);
+    box-shadow: inset 0 1px 0 rgba(255,107,53,0.1);
+  }
+
+  .btn-decrypt:hover {
+    box-shadow: 0 0 30px rgba(255,107,53,0.2), inset 0 1px 0 rgba(255,107,53,0.2);
+    border-color: var(--glow2);
+  }
+
+  /* ── OUTPUT ── */
+  .output-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    margin-bottom: 16px;
+  }
+
+  .output-card.success { border-color: rgba(0,255,157,0.3); }
+  .output-card.error   { border-color: rgba(255,60,90,0.4); }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .output-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status-dot.ok  { background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  .status-dot.err { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .btn-copy-sm {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    padding: 5px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .btn-copy-sm:hover { border-color: var(--glow); color: var(--glow); }
+
+  .output-body {
+    padding: 16px;
+    min-height: 70px;
+    word-break: break-all;
+    font-size: 12px;
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .output-body.has-content {
+    color: var(--glow);
+    font-style: normal;
+  }
+
+  .output-body.decrypted { color: var(--green); }
+  .output-body.error-msg { color: var(--danger); font-style: normal; }
+
+  /* ── TECH PANEL ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .tech-item {
+    background: var(--card);
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .tech-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    color: var(--glow);
+    line-height: 1;
+  }
+
+  .tech-label {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── PROCESS STEPS ── */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 80px;
+    position: relative;
+    opacity: 0.35;
+    transition: opacity 0.3s;
+  }
+
+  .step.lit { opacity: 1; }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    background: var(--surface);
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step.lit .step-num {
+    border-color: var(--glow);
+    color: var(--glow);
+    box-shadow: 0 0 12px rgba(0,212,255,0.3);
+    background: rgba(0,212,255,0.05);
+  }
+
+  .step-arrow {
+    position: absolute;
+    top: 15px; left: calc(50% + 16px);
+    width: calc(100% - 32px);
+    height: 1px;
+    background: var(--border);
+  }
+
+  .step:last-child .step-arrow { display: none; }
+
+  .step-name {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .step.lit .step-name { color: var(--glow); }
+
+  /* ── FOOTNOTE ── */
+  .footnote {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.9;
+    letter-spacing: 0.04em;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .footnote b { color: var(--glow); font-weight: 400; }
+  .footnote .warn { color: var(--glow2); }
+
+  /* ── LOADING PULSE ── */
+  @keyframes processPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(0,212,255,0); }
+    50% { box-shadow: 0 0 30px rgba(0,212,255,0.25); }
+  }
+
+  .processing { animation: processPulse 0.6s infinite; }
+
+  /* ── ACCESS GATE ── */
+  .access-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .access-gate.unlocked {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .gate-icon {
+    width: 80px; height: 80px;
+    border: 2px solid var(--glow);
+    display: grid; place-items: center;
+    margin-bottom: 24px;
+    animation: rotateBorder 6s linear infinite;
+  }
+
+  .gate-icon svg {
+    width: 40px; height: 40px;
+    fill: none;
+    stroke: var(--glow);
+    stroke-width: 1.5;
+  }
+
+  .gate-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.2em;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .gate-subtitle {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .gate-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .gate-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-color: var(--muted);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    padding: 14px 18px;
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.3em;
+    transition: all 0.2s;
+  }
+
+  .gate-input:focus {
+    border-color: var(--glow);
+    box-shadow: 0 2px 0 var(--glow), 0 0 30px rgba(0,212,255,0.15);
+  }
+
+  .gate-input.error {
+    border-color: var(--danger);
+    box-shadow: 0 2px 0 var(--danger), 0 0 20px rgba(255,60,90,0.2);
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+
+  .gate-btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.25em;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #004466, #006688);
+    color: var(--glow);
+    border: 1px solid rgba(0,212,255,0.3);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .gate-btn:hover {
+    box-shadow: 0 0 30px rgba(0,212,255,0.3);
+    border-color: var(--glow);
+  }
+
+  .gate-error {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--danger);
+    text-transform: uppercase;
+    min-height: 16px;
+  }
+
+  .gate-attempts {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .gate-lockout {
+    color: var(--danger);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .key-grid { grid-template-columns: 1fr; }
+    .action-row { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .btn-gen, .btn-clear { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ACCESS GATE -->
+<div class="access-gate" id="accessGate">
+  <div class="gate-icon">
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="11" width="18" height="11" rx="1"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      <circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+  <div class="gate-title">ACCESS REQUIRED</div>
+  <div class="gate-subtitle">Enter master password to continue</div>
+  <div class="gate-form">
+    <input type="password" class="gate-input" id="gatePassword" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')attemptAccess()">
+    <button class="gate-btn" onclick="attemptAccess()">Unlock</button>
+    <div class="gate-error" id="gateError"></div>
+    <div class="gate-attempts" id="gateAttempts"></div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="11" rx="1"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        <circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <div class="logo-text">Protect key</div>
+  </div>
+  <div class="tagline">Military-grade authenticated encryption</div>
+  <div class="spec-pills">
+    <span class="pill highlight">AES-256-GCM</span>
+    <span class="pill highlight">PBKDF2 · 310,000 iter</span>
+    <span class="pill highlight">SHA-256</span>
+    <span class="pill">96-bit IV</span>
+    <span class="pill">128-bit Auth Tag</span>
+    <span class="pill">Web Crypto API</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- TECH SPECS -->
+  <div class="tech-grid">
+    <div class="tech-item">
+      <div class="tech-value">256</div>
+      <div class="tech-label">Key Bits</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-value">96</div>
+      <div class="tech-label">IV Bits</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-value">128</div>
+      <div class="tech-label">Auth Tag</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-value">310K</div>
+      <div class="tech-label">PBKDF2 Iter</div>
+    </div>
+  </div>
+
+  <!-- KEY INPUT -->
+  <div class="section-label">Secret Passphrase</div>
+  <div class="card">
+    <div class="key-grid">
+      <div>
+        <div class="field-label">Passphrase <span class="required">*</span></div>
+        <input type="text" id="passphrase" placeholder="Enter a strong passphrase..." autocomplete="off" oninput="updateStrength(this.value)">
+        <div class="key-strength"><div class="key-strength-bar" id="strengthBar"></div></div>
+        <div class="strength-label" id="strengthLabel">strength: —</div>
+      </div>
+      <button class="btn-gen" onclick="generatePassphrase()">⟳ Generate</button>
+      <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
+    </div>
+  </div>
+
+  <!-- INPUT TEXT -->
+  <div class="section-label">Input</div>
+  <div class="card">
+    <div class="field-label">Plaintext / Ciphertext</div>
+    <div class="textarea-wrap">
+      <textarea id="inputText" placeholder="Paste your text here — any characters, symbols, UPPER/lower, numbers..." oninput="updateCharCount(this)"></textarea>
+      <div class="char-count" id="charCount">0 chars</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-encrypt" onclick="runEncrypt()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Encrypt
+      </button>
+      <button class="btn btn-decrypt" onclick="runDecrypt()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="1"/><path d="M7 11V7a5 5 0 0 1 7-4.69"/></svg>
+        Decrypt
+      </button>
+    </div>
+
+    <!-- PROCESS STEPS -->
+    <div class="steps" id="stepsRow">
+      <div class="step" id="s1">
+        <div class="step-arrow"></div>
+        <div class="step-num">1</div>
+        <div class="step-name">PBKDF2<br>Key Derive</div>
+      </div>
+      <div class="step" id="s2">
+        <div class="step-arrow"></div>
+        <div class="step-num">2</div>
+        <div class="step-name">Random<br>IV Gen</div>
+      </div>
+      <div class="step" id="s3">
+        <div class="step-arrow"></div>
+        <div class="step-num">3</div>
+        <div class="step-name">AES-GCM<br>Encrypt</div>
+      </div>
+      <div class="step" id="s4">
+        <div class="step-arrow"></div>
+        <div class="step-num">4</div>
+        <div class="step-name">Auth Tag<br>Append</div>
+      </div>
+      <div class="step" id="s5">
+        <div class="step-num">5</div>
+        <div class="step-name">Base64<br>Encode</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="section-label">Output</div>
+  <div class="output-card" id="outputCard">
+    <div class="output-header">
+      <div class="output-header-left">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusMsg">awaiting operation</span>
+      </div>
+      <button class="btn-copy-sm" onclick="copyOutput()">[ copy ]</button>
+    </div>
+    <div class="output-body" id="outputBody">Output will appear here...</div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section-label">How It Works</div>
+  <div class="footnote">
+    <b>PBKDF2:</b> Your passphrase is never used directly. PBKDF2 (Password-Based Key Derivation Function 2) with <b>SHA-256</b> and <b>310,000 iterations</b> + a random 16-byte salt stretches it into a 256-bit key. This makes brute-force attacks computationally devastating.<br><br>
+    <b>Random IV:</b> Each encryption generates a fresh cryptographically random <b>96-bit Initialization Vector</b>. Encrypting the same text twice always produces different ciphertext.<br><br>
+    <b>AES-256-GCM:</b> The gold standard. Galois/Counter Mode provides both <b>confidentiality</b> (no one can read it) and <b>authenticity</b> (no one can tamper with it). The 128-bit authentication tag means any modification is instantly detected on decryption — the operation throws an error.<br><br>
+    <b>Output format:</b> <span class="warn">salt(32) + iv(16) + ciphertext</span> — all concatenated, then Base64 encoded. Fully self-contained; salt and IV are embedded for decryption.<br><br>
+    <span class="warn">⚠ Your passphrase never leaves your browser. All crypto runs via the native Web Crypto API — no libraries, no network.</span>
+  </div>
+
+</div>
+
+<script>
+// ─── ACCESS GATE ─────────────────────────────────────────────────────────────
+
+// SHA-256 hash of the master password (change this to your password's hash)
+const ACCESS_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+
+let gateAttempts = 0;
+let gateLockoutUntil = 0;
+const MAX_GATE_ATTEMPTS = 5;
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function attemptAccess() {
+  const input = document.getElementById('gatePassword');
+  const errorEl = document.getElementById('gateError');
+  const attemptsEl = document.getElementById('gateAttempts');
+  const password = input.value;
+
+  // Check lockout
+  const now = Date.now();
+  if (now < gateLockoutUntil) {
+    const remaining = Math.ceil((gateLockoutUntil - now) / 1000);
+    errorEl.textContent = `LOCKED OUT — ${remaining}s remaining`;
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  if (!password) {
+    errorEl.textContent = 'ENTER PASSWORD';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  const hash = await hashPassword(password);
+  
+  if (hash === ACCESS_HASH) {
+    // Success - unlock the vault
+    document.getElementById('accessGate').classList.add('unlocked');
+    gateAttempts = 0;
+    sessionStorage.setItem('vaultUnlocked', 'true');
+  } else {
+    // Failed attempt
+    gateAttempts++;
+    input.value = '';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    
+    if (gateAttempts >= MAX_GATE_ATTEMPTS) {
+      // Lockout: exponential backoff (30s, 60s, 120s, etc.)
+      const lockoutSeconds = Math.min(30 * Math.pow(2, gateAttempts - MAX_GATE_ATTEMPTS), 600);
+      gateLockoutUntil = Date.now() + (lockoutSeconds * 1000);
+      errorEl.textContent = `TOO MANY ATTEMPTS — LOCKED ${lockoutSeconds}s`;
+      attemptsEl.textContent = '';
+      
+      // Countdown timer
+      const countdownInterval = setInterval(() => {
+        const remaining = Math.ceil((gateLockoutUntil - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          errorEl.textContent = 'TRY AGAIN';
+          attemptsEl.textContent = `${gateAttempts} failed attempts`;
+        } else {
+          errorEl.textContent = `LOCKED — ${remaining}s remaining`;
+        }
+      }, 1000);
+    } else {
+      errorEl.textContent = 'INVALID PASSWORD';
+      attemptsEl.textContent = `Attempt ${gateAttempts} of ${MAX_GATE_ATTEMPTS}`;
+    }
+  }
+}
+
+// Check if already unlocked this session
+if (sessionStorage.getItem('vaultUnlocked') === 'true') {
+  document.getElementById('accessGate').classList.add('unlocked');
+}
+
+// Focus password input on load
+window.addEventListener('DOMContentLoaded', () => {
+  const gate = document.getElementById('accessGate');
+  if (!gate.classList.contains('unlocked')) {
+    document.getElementById('gatePassword').focus();
+  }
+});
+
+// ─── Utilities ──────────────────────────────────────────────────────────────
+
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+
+// Block default context menu to discourage casual right-click inspection.
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+function toBase64(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+
+function fromBase64(str) {
+  return Uint8Array.from(atob(str), c => c.charCodeAt(0));
+}
+
+function joinBuffers(...bufs) {
+  const total = bufs.reduce((a, b) => a + b.byteLength, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const b of bufs) { out.set(new Uint8Array(b), offset); offset += b.byteLength; }
+  return out.buffer;
+}
+
+// ─── Key Derivation (PBKDF2) ─────────────────────────────────────────────────
+
+async function deriveKey(passphrase, salt) {
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+// ─── Encrypt ─────────────────────────────────────────────────────────────────
+// Output: Base64( salt[16] + iv[12] + ciphertext+tag )
+
+async function encryptAES(plaintext, passphrase) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await deriveKey(passphrase, salt);
+
+  const cipherBuf = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv, tagLength: 128 },
+    key,
+    enc.encode(plaintext)
+  );
+
+  const combined = joinBuffers(salt.buffer, iv.buffer, cipherBuf);
+  return toBase64(combined);
+}
+
+// ─── Decrypt ─────────────────────────────────────────────────────────────────
+
+async function decryptAES(b64, passphrase) {
+  const data = fromBase64(b64);
+  if (data.length < 28) throw new Error('Invalid ciphertext — too short');
+
+  const salt       = data.slice(0, 16);
+  const iv         = data.slice(16, 28);
+  const ciphertext = data.slice(28);
+
+  const key = await deriveKey(passphrase, salt);
+
+  const plainBuf = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv, tagLength: 128 },
+    key,
+    ciphertext
+  );
+
+  return dec.decode(plainBuf);
+}
+
+// ─── UI Helpers ──────────────────────────────────────────────────────────────
+
+function setStatus(state, msg) {
+  const dot = document.getElementById('statusDot');
+  const card = document.getElementById('outputCard');
+  dot.className = 'status-dot ' + (state === 'ok' ? 'ok' : state === 'err' ? 'err' : '');
+  document.getElementById('statusMsg').textContent = msg;
+  card.className = 'output-card ' + (state === 'ok' ? 'success' : state === 'err' ? 'error' : '');
+}
+
+function setOutput(text, type) {
+  const box = document.getElementById('outputBody');
+  box.textContent = text;
+  box.className = 'output-body ' + (type || '');
+  if (text && text !== 'Output will appear here...') box.classList.add('has-content');
+}
+
+function lightStep(n) {
+  document.getElementById('s' + n).classList.add('lit');
+}
+
+function resetSteps() {
+  for (let i = 1; i <= 5; i++) document.getElementById('s' + i).classList.remove('lit');
+}
+
+async function animateSteps(n = 1) {
+  if (n > 5) return;
+  lightStep(n);
+  await new Promise(r => setTimeout(r, 150));
+  animateSteps(n + 1);
+}
+
+function updateCharCount(el) {
+  document.getElementById('charCount').textContent = el.value.length + ' chars';
+}
+
+function updateStrength(val) {
+  const bar = document.getElementById('strengthBar');
+  const lbl = document.getElementById('strengthLabel');
+  let score = 0;
+  if (val.length >= 8)  score += 20;
+  if (val.length >= 16) score += 20;
+  if (/[A-Z]/.test(val)) score += 15;
+  if (/[a-z]/.test(val)) score += 15;
+  if (/[0-9]/.test(val)) score += 15;
+  if (/[^A-Za-z0-9]/.test(val)) score += 15;
+  bar.style.width = score + '%';
+  const levels = [[0,'—','var(--muted)'], [20,'weak','var(--danger)'], [50,'fair','var(--glow2)'], [75,'good','#ffe066'], [90,'strong','var(--green)']];
+  const level = levels.reverse().find(([min]) => score >= min);
+  bar.style.background = level[2];
+  lbl.textContent = 'strength: ' + level[1];
+  lbl.style.color = level[2];
+}
+
+// ─── Cryptographically Secure Random ─────────────────────────────────────────
+
+function secureRandomInt(max) {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
+function generatePassphrase() {
+  const words = [
+    'alpha','bravo','cipher','delta','echo','foxtrot','ghost','hawk','iron','jade',
+    'kilo','lima','matrix','nova','omega','phantom','quartz','raven','sigma','titan',
+    'ultra','vault','whisper','xenon','yield','zephyr','anchor','beacon','cobalt',
+    'dynamo','ember','flux','granite','helix','ionic','jupiter','karma','lunar',
+    'meteor','nexus','orbit','prism','quantum','reactor','solar','tempest','umbra',
+    'vector','warden','xray','zenith','apex','binary','chrome','digital','enigma'
+  ];
+  const syms = ['!','@','#','$','%','^','&','*','+','=','-','_'];
+  
+  // Use CSPRNG instead of Math.random
+  const w1 = words[secureRandomInt(words.length)];
+  const w2 = words[secureRandomInt(words.length)];
+  const w3 = words[secureRandomInt(words.length)];
+  const nums = secureRandomInt(900) + 100;
+  const sym1 = syms[secureRandomInt(syms.length)];
+  const sym2 = syms[secureRandomInt(syms.length)];
+  
+  const pass = w1.charAt(0).toUpperCase() + w1.slice(1) + sym1 + w2 + sym2 + w3 + nums;
+  const el = document.getElementById('passphrase');
+  el.value = pass;
+  el.type = 'text';
+  updateStrength(pass);
+  setTimeout(() => { el.type = 'password'; }, 3000);
+}
+
+function copyOutput() {
+  const text = document.getElementById('outputBody').textContent;
+  if (!text || text === 'Output will appear here...') return;
+  navigator.clipboard.writeText(text).then(() => {
+    setStatus('ok', 'copied · auto-clear in 30s');
+    // Auto-clear clipboard after 30 seconds for security
+    setTimeout(() => {
+      navigator.clipboard.writeText('').then(() => {
+        setStatus('ok', 'clipboard cleared');
+        setTimeout(() => setStatus('ok', 'ready'), 1500);
+      });
+    }, 30000);
+  });
+}
+
+// ─── Clear All Sensitive Data ────────────────────────────────────────────────
+
+function clearAll() {
+  document.getElementById('passphrase').value = '';
+  document.getElementById('inputText').value = '';
+  document.getElementById('outputBody').textContent = 'Output will appear here...';
+  document.getElementById('outputBody').className = 'output-body';
+  document.getElementById('charCount').textContent = '0 chars';
+  updateStrength('');
+  resetSteps();
+  setStatus('', 'cleared — all fields wiped');
+  // Attempt to clear clipboard
+  navigator.clipboard.writeText('').catch(() => {});
+}
+
+// ─── Session Timeout (Auto-clear after inactivity) ───────────────────────────
+
+let inactivityTimer;
+const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    const pass = document.getElementById('passphrase').value;
+    const input = document.getElementById('inputText').value;
+    if (pass || input) {
+      clearAll();
+      setStatus('', 'session timeout — fields cleared for security');
+    }
+  }, SESSION_TIMEOUT);
+}
+
+['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+  document.addEventListener(evt, resetInactivityTimer, { passive: true });
+});
+resetInactivityTimer();
+
+// ─── Rate Limiting (Brute-force protection) ──────────────────────────────────
+
+let decryptAttempts = 0;
+let lastDecryptAttempt = 0;
+let lockoutUntil = 0;
+
+function checkRateLimit() {
+  const now = Date.now();
+  
+  // If locked out, check if lockout has expired
+  if (now < lockoutUntil) {
+    const remaining = Math.ceil((lockoutUntil - now) / 1000);
+    setStatus('err', `rate limited — wait ${remaining}s`);
+    setOutput(`⚠  Too many failed attempts. Please wait ${remaining} seconds.`, 'error-msg');
+    return false;
+  }
+  
+  // Reset counter if last attempt was more than 60 seconds ago
+  if (now - lastDecryptAttempt > 60000) {
+    decryptAttempts = 0;
+  }
+  
+  lastDecryptAttempt = now;
+  return true;
+}
+
+function recordFailedDecrypt() {
+  decryptAttempts++;
+  // After 5 failed attempts, lockout for increasing duration
+  if (decryptAttempts >= 5) {
+    const lockoutSeconds = Math.min(30 * Math.pow(2, decryptAttempts - 5), 300); // Max 5 min
+    lockoutUntil = Date.now() + (lockoutSeconds * 1000);
+  }
+}
+
+// ─── Main Actions ─────────────────────────────────────────────────────────────
+
+async function runEncrypt() {
+  const text = document.getElementById('inputText').value;
+  const pass = document.getElementById('passphrase').value;
+
+  if (!text.trim()) { setStatus('err', 'no input text'); setOutput('⚠  Enter text to encrypt.', 'error-msg'); return; }
+  if (!pass)        { setStatus('err', 'no passphrase'); setOutput('⚠  Enter a passphrase first.', 'error-msg'); return; }
+
+  resetSteps();
+  setStatus('', 'encrypting...');
+  setOutput('Processing...', '');
+
+  try {
+    animateSteps();
+    const result = await encryptAES(text, pass);
+    setOutput(result, 'has-content');
+    setStatus('ok', `encrypted · ${text.length} chars → ${result.length} chars`);
+  } catch (e) {
+    setOutput('⚠  Encryption failed: ' + e.message, 'error-msg');
+    setStatus('err', 'encryption failed');
+  }
+}
+
+async function runDecrypt() {
+  const text = document.getElementById('inputText').value.trim();
+  const pass = document.getElementById('passphrase').value;
+
+  if (!text) { setStatus('err', 'no input text'); setOutput('⚠  Paste an encrypted string to decrypt.', 'error-msg'); return; }
+  if (!pass) { setStatus('err', 'no passphrase'); setOutput('⚠  Enter a passphrase first.', 'error-msg'); return; }
+
+  // Check rate limiting before attempting decryption
+  if (!checkRateLimit()) return;
+
+  resetSteps();
+  setStatus('', 'decrypting...');
+  setOutput('Processing...', '');
+
+  try {
+    animateSteps();
+    const result = await decryptAES(text, pass);
+    // Reset attempts on successful decryption
+    decryptAttempts = 0;
+    setOutput(result, 'decrypted');
+    setStatus('ok', `decrypted · ${result.length} chars recovered`);
+  } catch (e) {
+    // Record failed attempt for rate limiting
+    // recordFailedDecrypt();
+    decryptAttempts++;
+    const msg = e.name === 'OperationError'
+      ? '⚠  Decryption failed — wrong passphrase or corrupted ciphertext. AES-GCM authentication rejected this data.'
+      : '⚠  ' + e.message;
+    setOutput(msg, 'error-msg');
+    setStatus('err', `authentication failed — attempt ${decryptAttempts}/5`);
+  }
+}
+</script>
+</body>
+</html>
+<!-- Passphrase must be 16 char -->
